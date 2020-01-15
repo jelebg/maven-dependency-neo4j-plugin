@@ -69,7 +69,8 @@ public class Neo4jCleanMojo
             Session session = driver.session(AccessMode.WRITE)) {
             session.writeTransaction(tx -> {
 
-                tx.run("MATCH (a:Artifact) DETACH DELETE a");// TODO : buld delete
+                tx.run("MATCH (a:Artifact) DETACH DELETE a");// TODO : bulk delete
+                tx.run("MATCH (a:ArtifactAllVersion) DETACH DELETE a");// TODO : bulk delete
 
                 return null;
             });

@@ -59,10 +59,16 @@ public class Neo4jDependencyNodeVisitor
         log.info("node: " + node.getArtifact().getArtifactId() + " - " + node.getArtifact().getVersion() + " - " + node.getArtifact().getType());
 
         // TODO : prepare statement
-        tx.run("MERGE (parent:Artifact {artifactId:$artifactId, version:$version, type:$atype}) \n", Values.parameters(
-                "artifactId", node.getArtifact().getArtifactId(),
-                "version", node.getArtifact().getVersion(),
-                "atype", node.getArtifact().getType()));
+        tx.run(
+                String.join("\n",
+                        "MERGE (parentAV:ArtifactAllVersion {groupId:$groupId, artifactId:$artifactId, type:$atype})",
+                        "MERGE (parent:Artifact {groupId:$groupId, artifactId:$artifactId, type:$atype, version:$version})",
+                        "MERGE (parent) <-[:VERSION]- (parentAV)"),
+                Values.parameters(
+                        "groupId", node.getArtifact().getGroupId(),
+                        "artifactId", node.getArtifact().getArtifactId(),
+                        "version", node.getArtifact().getVersion(),
+                        "atype", node.getArtifact().getType()));
 
         /* TODO : on garde ou pas ? devrait être inutile normalement
         if (node.getParent() != null) {
@@ -90,21 +96,29 @@ public class Neo4jDependencyNodeVisitor
             log.info("child: " + child.getArtifact().getArtifactId() + " - " + child.getArtifact().getVersion() + " - " + child.getArtifact().getType());
 
             tx.run(
-                    "MERGE (child:Artifact {artifactId:$childArtifactId, version:$childVersion, type:$childType})",
+                    String.join("\n",
+                            "MERGE (childAV:ArtifactAllVersion {groupId:$childGroupId, artifactId:$childArtifactId, type:$childType})",
+                            "MERGE (child:Artifact {groupId:$childGroupId, artifactId:$childArtifactId, type:$childType, version:$childVersion})",
+                            "MERGE (child) <-[:VERSION]- (childAV)"),
                     Values.parameters(
+                            "childGroupId", child.getArtifact().getGroupId(),
                             "childArtifactId", child.getArtifact().getArtifactId(),
                             "childVersion", child.getArtifact().getVersion(),
                             "childType", child.getArtifact().getType()));
-            tx.run("MATCH (parent:Artifact {artifactId:$artifactId, version:$version, type:$atype}) \n" +
-                    "MATCH (child:Artifact {artifactId:$childArtifactId, version:$childVersion, type:$childType}) \n" +
-                    "MERGE (parent)-[:DEPENDS_ON {scope : $scope}]->(child)", Values.parameters(
-                    "artifactId", node.getArtifact().getArtifactId(),
-                    "version", node.getArtifact().getVersion(),
-                    "atype", node.getArtifact().getType(),
-                    "childArtifactId", child.getArtifact().getArtifactId(),
-                    "childVersion", child.getArtifact().getVersion(),
-                    "childType", child.getArtifact().getType(),
-                    "scope", child.getArtifact().getScope()
+            tx.run(String.join("\n",
+                    "MATCH (parent:Artifact {groupId:$groupId, artifactId:$artifactId, version:$version, type:$atype})",
+                    "MATCH (child:Artifact {groupId:$childGroupId, artifactId:$childArtifactId, version:$childVersion, type:$childType})",
+                    "MERGE (parent)-[:DEPENDS_ON {scope : $scope}]->(child)"),
+                    Values.parameters(
+                        "groupId", node.getArtifact().getGroupId(),
+                        "artifactId", node.getArtifact().getArtifactId(),
+                        "version", node.getArtifact().getVersion(),
+                        "atype", node.getArtifact().getType(),
+                        "childGroupId", child.getArtifact().getGroupId(),
+                        "childArtifactId", child.getArtifact().getArtifactId(),
+                        "childVersion", child.getArtifact().getVersion(),
+                        "childType", child.getArtifact().getType(),
+                        "scope", child.getArtifact().getScope()
                     ));
         }
 
@@ -113,13 +127,6 @@ public class Neo4jDependencyNodeVisitor
 
     @Override
     public boolean endVisit(org.apache.maven.shared.dependency.tree.DependencyNode node) {
-        log.info("");
-        log.info("endVisit: " + node.getArtifact().getArtifactId()+" - "+node.getArtifact().getVersion()+" - "+node.getArtifact().getType());
-        /* nothing
-        if ( node.getParent() == null || node.getParent() == node )
-        {
-            writer.write( " } " );
-        }*/
         return true;
     }
 }
