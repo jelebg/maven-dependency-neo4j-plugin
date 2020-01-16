@@ -3,10 +3,7 @@ package org.apache.maven.plugin.dependency.neo4j;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.neo4j.driver.v1.*;
 
@@ -17,7 +14,7 @@ import org.neo4j.driver.v1.*;
  * @version $Id$
  * @since 2.0-alpha-5
  */
-@Mojo( name = "clean", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
+@Mojo( name = "clean", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true, defaultPhase = LifecyclePhase.VALIDATE )
 public class Neo4jCleanMojo
     extends AbstractMojo
 {

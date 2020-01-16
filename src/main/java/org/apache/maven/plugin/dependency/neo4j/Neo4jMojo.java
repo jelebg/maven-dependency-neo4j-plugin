@@ -5,10 +5,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
@@ -21,7 +18,7 @@ import org.neo4j.driver.v1.*;
  * @version $Id$
  * @since 2.0-alpha-5
  */
-@Mojo( name = "neo4j", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true )
+@Mojo( name = "neo4j", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true, defaultPhase = LifecyclePhase.INITIALIZE)
 public class Neo4jMojo
     extends AbstractMojo
 {
