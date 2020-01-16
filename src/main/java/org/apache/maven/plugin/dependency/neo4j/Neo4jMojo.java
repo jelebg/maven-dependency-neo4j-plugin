@@ -120,7 +120,7 @@ public class Neo4jMojo
 
 
         } catch (DependencyTreeBuilderException e) {
-            getLog().error("exception pendant la construction du graph de dépendances", e);
+            getLog().error("exception during depency graph generation", e);
         }
     }
 

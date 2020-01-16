@@ -41,41 +41,10 @@ under the License.
   </prerequisites>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/plugins/tags/maven-dependency-plugin-2.8</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-dependency-plugin-2.8</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/plugins/tags/maven-dependency-plugin-2.8</url>
+    <connection>scm:git:https://github.com/jelebg/maven-dependency-neo4j-plugin.git</connection>
+    <developerConnection>scm:git:https://github.com/jelebg/maven-dependency-neo4j-plugin.git</developerConnection>
+    <url>https://github.com/jelebg/maven-dependency-neo4j-plugin.git</url>
   </scm>
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MDEP</url>
-  </issueManagement>
-  <distributionManagement>
-    <site>
-      <id>apache.website</id>
-      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
-    </site>
-  </distributionManagement>
-
-  <contributors>
-    <contributor>
-      <name>Bakito</name>
-    </contributor>
-    <contributor>
-      <name>Baptiste MATHUS</name>
-    </contributor>
-    <contributor>
-      <name>Kalle Korhonen</name>
-    </contributor>
-    <contributor>
-      <name>Ryan Heinen</name>
-    </contributor>
-    <contributor>
-      <name>Andreas Kuhtz</name>
-    </contributor>
-    <contributor>
-      <name>Holger Mense</name>
-    </contributor>
-  </contributors>
 
   <properties>
     <mavenVersion>2.0.9</mavenVersion>
@@ -123,58 +92,7 @@ under the License.
       <version>${mavenVersion}</version>
     </dependency>
 
-    <!-- shared -->
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-api</artifactId>
-      <version>3.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.reporting</groupId>
-      <artifactId>maven-reporting-impl</artifactId>
-      <version>2.0.5</version>
-    </dependency>
-
-    <!-- doxia -->
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-sink-api</artifactId>
-      <version>${doxiaVersion}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.doxia</groupId>
-      <artifactId>doxia-site-renderer</artifactId>
-      <version>${doxiaVersion}</version>
-    </dependency>
-
-    <!-- plexus -->
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-archiver</artifactId>
-      <version>2.3</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>3.0.9</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>file-management</artifactId>
-      <version>1.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-9-stable-1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-io</artifactId>
-      <version>2.0.6</version>
-    </dependency>
-
-    <!-- shared -->
+     <!-- shared -->
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-dependency-analyzer</artifactId>
@@ -221,6 +139,7 @@ under the License.
       <scope>provided</scope>
     </dependency>
 
+    <!-- neoj -->
     <dependency>
       <groupId>org.neo4j.driver</groupId>
       <artifactId>neo4j-java-driver</artifactId>
@@ -234,32 +153,6 @@ under the License.
       <version>3.8.2</version>
       <scope>test</scope>
     </dependency>
-    <dependency> <!-- this seems to be a critical dependency, 
-      must be declared before org.apache.maven.plugin-testing so it's first on the classpath -->
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.plugin-testing</groupId>
-      <artifactId>maven-plugin-testing-tools</artifactId>
-      <version>${pluginTestingVersion}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.plugin-testing</groupId>
-      <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>${pluginTestingVersion}</version>
-      <scope>test</scope>
-    </dependency>
-   <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-interpolation</artifactId>
-      <version>1.9</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
