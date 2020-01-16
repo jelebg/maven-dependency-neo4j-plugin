@@ -6,6 +6,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 import org.neo4j.driver.v1.*;
+import org.neo4j.driver.v1.summary.SummaryCounters;
 
 /**
  * Displays the dependency tree for this project.
@@ -14,7 +15,7 @@ import org.neo4j.driver.v1.*;
  * @version $Id$
  * @since 2.0-alpha-5
  */
-@Mojo( name = "clean", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true, defaultPhase = LifecyclePhase.VALIDATE )
+@Mojo( name = "clean", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 public class Neo4jCleanMojo
     extends AbstractMojo
 {
@@ -64,13 +65,19 @@ public class Neo4jCleanMojo
         // TODO : parametres pour uri, user et mdp
         try (Driver driver = GraphDatabase.driver( neo4jUri, auth);
             Session session = driver.session(AccessMode.WRITE)) {
-            session.writeTransaction(tx -> {
 
-                tx.run("MATCH (a:Artifact) DETACH DELETE a");// TODO : bulk delete
-                tx.run("MATCH (a:ArtifactAllVersion) DETACH DELETE a");// TODO : bulk delete
+                SummaryCounters counters;
+                do {
+                    counters = session.writeTransaction(tx -> {
+                        return tx.run("MATCH (a:Artifact) WITH a LIMIT 1000 DETACH DELETE a").consume().counters();
+                    });
+                } while (counters.containsUpdates());
 
-                return null;
-            });
+                do {
+                    counters = session.writeTransaction(tx -> {
+                        return tx.run("MATCH (a:ArtifactAllVersion) WITH a LIMIT 1000 DETACH DELETE a").consume().counters();
+                    });
+                } while (counters.containsUpdates());
         }
 
     }

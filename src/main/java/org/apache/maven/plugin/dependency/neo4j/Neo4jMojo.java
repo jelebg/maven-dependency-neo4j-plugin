@@ -18,7 +18,7 @@ import org.neo4j.driver.v1.*;
  * @version $Id$
  * @since 2.0-alpha-5
  */
-@Mojo( name = "neo4j", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true, defaultPhase = LifecyclePhase.INITIALIZE)
+@Mojo( name = "neo4j", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 public class Neo4jMojo
     extends AbstractMojo
 {
@@ -87,14 +87,22 @@ public class Neo4jMojo
 
             try (Driver driver = GraphDatabase.driver(neo4jUri, auth);
                 Session session = driver.session(AccessMode.WRITE)) {
+
                 session.writeTransaction(tx -> {
+                            tx.run("CREATE INDEX ON :Artifact(artifactId)");
+                            tx.run("CREATE INDEX ON :ArtifactAllVersion(artifactId)");
+                            return null;
+                        });
 
-                    root.accept(new Neo4jDependencyNodeVisitor(tx, getLog()));
+                Neo4jDependencyNodeVisitor neo4jDependencyNodeVisitor = new Neo4jDependencyNodeVisitor(session, getLog());
+                root.accept(neo4jDependencyNodeVisitor);
+                neo4jDependencyNodeVisitor.endVisit();
 
-                    Artifact parent = project.getParentArtifact();
-                    Artifact artifact = project.getArtifact();
+                Artifact parent = project.getParentArtifact();
+                Artifact artifact = project.getArtifact();
 
-                    if (artifact != null && parent != null) {
+                if (artifact != null && parent != null) {
+                    session.writeTransaction(tx -> {
                         tx.run("MERGE (parent:Artifact {artifactId:$artifactId, version:$version, type:$atype}) \n",
                                 Values.parameters(
                                         "artifactId", parent.getArtifactId(),
@@ -109,10 +117,10 @@ public class Neo4jMojo
                                 "childArtifactId", artifact.getArtifactId(),
                                 "childVersion", artifact.getVersion(),
                                 "childType", artifact.getType()));
-                    }
 
-                    return null;
-                });
+                        return null;
+                    });
+                }
             }
 
 
